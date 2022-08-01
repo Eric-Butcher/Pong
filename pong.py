@@ -29,11 +29,9 @@ PADDLE_HEIGHT = 100
 BALL_WIDTH = 12
 MAX_VELOCITY = 5
 
-WINNING_SCORE = 2
+WINNING_SCORE = 11
 
 # Classes
-
-
 class Paddle:
     COLOR = WHITE
     VELOCITY = 4
@@ -99,17 +97,23 @@ class ScoreBoard:
 def handle_paddle_movement(keys, left_paddle, right_paddle):
 
     # up movement for left paddle
+
+    # moves paddle up if not at top of screen
     if keys[pygame.K_w] and left_paddle.y - left_paddle.VELOCITY >= 0:
         left_paddle.move(direction="up")
+    # if paddle at top of screen, don't move it more
     elif keys[pygame.K_w] and left_paddle.y - left_paddle.VELOCITY < 0:
         left_paddle.y = 2
 
     # down movement for left paddle
+
+    # moves paddle down if not at bottom of screen
     if (
         keys[pygame.K_s]
         and (left_paddle.y + left_paddle.height + left_paddle.VELOCITY) <= SCREEN_HEIGHT
     ):
         left_paddle.move(direction="down")
+    # if paddle is at bottom of screen don't move it anymore
     elif (
         keys[pygame.K_s]
         and (left_paddle.y + left_paddle.height + left_paddle.VELOCITY) > SCREEN_HEIGHT
@@ -117,18 +121,24 @@ def handle_paddle_movement(keys, left_paddle, right_paddle):
         left_paddle.y = (SCREEN_HEIGHT - left_paddle.height) - 2
 
     # up movement for right paddle
+
+    # moves paddle up if not at top of screen
     if keys[pygame.K_UP] and right_paddle.y - right_paddle.VELOCITY >= 0:
         right_paddle.move(direction="up")
+    # if paddle at top of screen, don't move it more
     elif keys[pygame.K_UP] and right_paddle.y - right_paddle.VELOCITY < 0:
         right_paddle.y = 2
 
     # down movement for right paddle
+
+    # moves paddle down if not at bottom of screen
     if (
         keys[pygame.K_DOWN]
         and (right_paddle.y + right_paddle.height + right_paddle.VELOCITY)
         <= SCREEN_HEIGHT
     ):
         right_paddle.move(direction="down")
+    # if paddle is at bottom of screen don't move it anymore
     elif (
         keys[pygame.K_DOWN]
         and (right_paddle.y + right_paddle.height + right_paddle.VELOCITY)
@@ -185,7 +195,10 @@ def calculate_new_y_velocity(the_ball, the_paddle):
     paddle_midpoint = the_paddle.y + (PADDLE_HEIGHT / 2)
     ball_midpoint = the_ball.y + (BALL_WIDTH / 2)
 
-    new_y_vel = (ball_midpoint - paddle_midpoint) / (PADDLE_HEIGHT / 2)
+    # percentage as 0-1 float of how far off the ball hit the paddle 
+    # away from the center of the paddle
+    new_y_vel = (ball_midpoint - paddle_midpoint) / (PADDLE_HEIGHT / 2) 
+
     new_y_vel *= MAX_VELOCITY
     return new_y_vel
 
@@ -201,7 +214,10 @@ def score(the_ball, the_scoreboard, left_scored):
 
     # game has been won and the check_win() func call in the main loop
     # will take care of the rest
-    if the_scoreboard.left_score >= WINNING_SCORE or the_scoreboard.right_score >= WINNING_SCORE:
+    if (
+        the_scoreboard.left_score >= WINNING_SCORE
+        or the_scoreboard.right_score >= WINNING_SCORE
+    ):
         pass
     else:
         # reset the ball's position to the center of the screen
@@ -215,7 +231,6 @@ def score(the_ball, the_scoreboard, left_scored):
         the_ball.y_vel = random.randint(0 - MAX_VELOCITY, MAX_VELOCITY)
 
 
-
 def get_non_zero_random(bottom, top):
 
     while True:
@@ -227,24 +242,56 @@ def get_non_zero_random(bottom, top):
 
 
 def check_win(the_ball, left_paddle, right_paddle, the_scoreboard, window):
-    #draw(window, [left_paddle, right_paddle], the_ball, the_scoreboard)
-    if the_scoreboard.left_score >= WINNING_SCORE or the_scoreboard.right_score >= WINNING_SCORE:
+    if (
+        the_scoreboard.left_score >= WINNING_SCORE
+        or the_scoreboard.right_score >= WINNING_SCORE
+    ):
 
         quarter_screen_width = SCREEN_WIDTH // 4
-        if the_scoreboard.left_score >= WINNING_SCORE:
-            left_message = FONT.render("Winner!", 1, WHITE)
-            right_message = FONT.render("Loser.", 1, WHITE)
-            window.blit(left_message, [quarter_screen_width - left_message.get_width() // 2, SCREEN_HEIGHT//2])
-            window.blit(right_message, [3 * quarter_screen_width - right_message.get_width() // 2, SCREEN_HEIGHT//2])   
-        else:
-            left_message = FONT.render("Winner!", 1, WHITE)
-            right_message = FONT.render("Loser.", 1, WHITE)
-            window.blit(left_message, [quarter_screen_width - left_message.get_width() // 2, SCREEN_HEIGHT//2])
-            window.blit(right_message, [3 * quarter_screen_width - right_message.get_width() // 2, SCREEN_HEIGHT//2])
 
+        # left won
+        if the_scoreboard.left_score >= WINNING_SCORE:
+
+            # create messages to be displayed when left wins
+            left_message = FONT.render("Winner!", 1, WHITE)
+            right_message = FONT.render("Loser.", 1, WHITE)
+            window.blit(
+                left_message,
+                [
+                    quarter_screen_width - left_message.get_width() // 2,
+                    SCREEN_HEIGHT // 2,
+                ],
+            )
+            window.blit(
+                right_message,
+                [
+                    3 * quarter_screen_width - right_message.get_width() // 2,
+                    SCREEN_HEIGHT // 2,
+                ],
+            )
+        else:
+            # create messages to be displayed when right wins
+            left_message = FONT.render("Winner!", 1, WHITE)
+            right_message = FONT.render("Loser.", 1, WHITE)
+            window.blit(
+                left_message,
+                [
+                    quarter_screen_width - left_message.get_width() // 2,
+                    SCREEN_HEIGHT // 2,
+                ],
+            )
+            window.blit(
+                right_message,
+                [
+                    3 * quarter_screen_width - right_message.get_width() // 2,
+                    SCREEN_HEIGHT // 2,
+                ],
+            )
+
+        # display those messages and wait 5 seconds
         pygame.display.update()
         pygame.time.delay(5000)
-  
+
         # resetting to start values
         the_scoreboard.left_score = 0
         the_scoreboard.right_score = 0
@@ -307,6 +354,7 @@ def main():
 
         clock.tick(FPS)
         draw(WINDOW, [left_paddle, right_paddle], the_ball, the_scoreboard)
+
         # loops over each event happening in each frame
         # if that user quits in that frame, close the app
         for event in pygame.event.get():
