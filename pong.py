@@ -186,9 +186,9 @@ def collision(the_ball, left_paddle, right_paddle, the_scoreboard):
 
 def calculate_new_x_velocity(the_ball):
     if the_ball.x_vel > 0:
-        return 0 - MAX_VELOCITY
+        return ((0 - the_ball.x_vel) - 1)
     else:
-        return MAX_VELOCITY
+        return ((0 - the_ball.x_vel) + 1)
 
 
 def calculate_new_y_velocity(the_ball, the_paddle):
