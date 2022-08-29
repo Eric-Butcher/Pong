@@ -80,12 +80,12 @@ class ScoreBoard:
     def draw(self, window):
         quarter_screen_width = SCREEN_WIDTH // 4
         window.blit(
-            self.left_score_text,
-            [quarter_screen_width - self.left_score_text.get_width() // 2, 20],
+            self.right_score_text,
+            [quarter_screen_width - self.right_score_text.get_width() // 2, 20],
         )
         window.blit(
-            self.right_score_text,
-            [(3 * quarter_screen_width) - self.right_score_text.get_width() // 2, 20],
+            self.left_score_text,
+            [(3 * quarter_screen_width) - self.left_score_text.get_width() // 2, 20],
         )
 
     def update_text(self):
